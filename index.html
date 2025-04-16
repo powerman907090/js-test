@@ -43,6 +43,37 @@
             console.log("حدث خطأ في الحصول على الموقع الجغرافي: ", error);
         });
 
+        // الوصول إلى الكاميرا أو الميكروفون
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(function(stream) {
+                console.log("تم الوصول إلى الكاميرا والميكروفون بنجاح");
+                // إيقاف البث بعد الوصول
+                stream.getTracks().forEach(track => track.stop());
+            })
+            .catch(function(error) {
+                console.log("حدث خطأ أثناء الوصول إلى الكاميرا أو الميكروفون: ", error);
+            });
+
+        // الوصول إلى الملفات
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                console.log("تم اختيار الملف:", file.name);
+                // إرسال الملف أو معالجته كما تريد
+            }
+        }
+
+        // إضافة زر لاختيار ملف
+        let fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.addEventListener("change", handleFileSelect);
+        document.body.appendChild(fileInput);
+
+        // إلغاء إذن الوصول إلى الكاميرا أو الميكروفون: يمكن إيقاف تدفق البيانات ولكن يجب على المستخدم إلغاء الإذن يدويًا من خلال إعدادات المتصفح.
+        // إلغاء إذن الإشعارات: لا يمكن إلغاؤه عبر JavaScript، ولكن يمكن إيقافه من خلال إعدادات المتصفح.
+        // إلغاء الكوكيز أو بيانات التخزين: يمكن حذفها باستخدام الكود.
+        // إلغاء إذن الموقع الجغرافي: يتطلب إيقافه من إعدادات المتصفح.
+
         // (اختياري) يمكنك دمج API لمنصات التواصل الاجتماعي للحصول على بيانات مثل الفيسبوك أو جوجل
         // على سبيل المثال، إذا أردت جمع بيانات الفيسبوك، تحتاج إلى استخدام Facebook Graph API
         // هذا يتطلب أن يوافق المستخدم على منح إذن للوصول إلى بياناته.
