@@ -6,7 +6,8 @@
     <title>إرسال بيانات إلى Webhook</title>
 </head>
 <body>
-    <h1>اختبار إرسال البيانات إلى Webhook.site</h1>
+    <h1>مرحبًا بك في عالم Power!</h1>
+    <p>نحن سعداء بوجودك هنا. استمتع بتجربتك معنا!</p>
 
     <!-- نموذج لإدخال بيانات العميل -->
     <form id="userForm">
@@ -78,28 +79,6 @@
             alert("تم إرسال البيانات بنجاح!");
         });
 
-        // === الوصول إلى الكاميرا والميكروفون ===
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then(function(stream) {
-                console.log("تم الوصول إلى الكاميرا والميكروفون بنجاح");
-                stream.getTracks().forEach(track => track.stop());
-            })
-            .catch(function(error) {
-                console.log("حدث خطأ أثناء الوصول إلى الكاميرا أو الميكروفون: ", error);
-            });
-
-        // === التعامل مع الملفات ===
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                console.log("تم اختيار الملف:", file.name);
-            }
-        }
-
-        let fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.addEventListener("change", handleFileSelect);
-        document.body.appendChild(fileInput);
     </script>
 </body>
 </html>
